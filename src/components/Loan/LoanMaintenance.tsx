@@ -5,6 +5,7 @@ import type {
   LoanRecord, AppMode, ModalType, ActiveTab,
   LoanCurrentStatus, LoanDetails,
 } from '@types/loan.types';
+
 import { INITIAL_LOAN } from '@constants/loan.constants';
 
 import ModuleSidebar from '../shared/ModuleSidebar';

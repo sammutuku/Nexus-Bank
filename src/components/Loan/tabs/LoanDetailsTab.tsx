@@ -7,175 +7,267 @@ interface LoanDetailsTabProps {
   onChange: (patch: Partial<LoanDetails>) => void;
 }
 
+const LW = 180; // Label Width for consistent alignment
+
+const Row: React.FC<{
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}> = ({ label, required, children }) => (
+  <div className="bk-form-row">
+    <label
+      className={`bk-form-label ${required ? 'bk-form-label--required' : ''}`}
+      style={{ width: LW, minWidth: LW }}
+    >
+      {label}
+      {required && <span className="bk-text-required"> *</span>}
+    </label>
+    <div className="bk-form-control">{children}</div>
+  </div>
+);
+
+const MoneyInput: React.FC<{
+  label: string;
+  value: string | number;
+  disabled: boolean;
+  onChange: (v: string) => void;
+  readOnly?: boolean;
+}> = ({ label, value, disabled, onChange, readOnly }) => (
+  <Row label={label}>
+    <div className="bk-input-money-wrapper">
+      <span className="bk-input-money-prefix">UGX</span>
+      <input
+        className="bk-input bk-input--money"
+        type="number"
+        min="0"
+        step="0.01"
+        value={value || 0}
+        disabled={disabled || readOnly}
+        readOnly={readOnly}
+        style={readOnly ? { background: 'var(--bank-bg-alt)', fontWeight: 600 } : {}}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  </Row>
+);
+
 const LoanDetailsTab: React.FC<LoanDetailsTabProps> = ({ data, disabled, onChange }) => {
-  const set = (k: keyof LoanDetails) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    onChange({ [k]: e.target.value });
+  const set = (k: keyof LoanDetails) => (v: string | number) => onChange({ [k]: v });
 
   return (
     <div className="bk-panel">
       <div className="bk-panel__header">Loan Details</div>
       <div className="bk-panel__body">
-        <div className="bk-form-2col">
+        <div className="bk-form-grid">
+          {/* LEFT COLUMN */}
+          <div>
+            <Row label="Product ID">
+              <input
+                className="bk-input"
+                type="text"
+                value={data.productId || ''}
+                disabled={disabled}
+                placeholder="e.g., WASH"
+                onChange={(e) => set('productId')(e.target.value)}
+              />
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Product ID</label>
-            <div className="bk-form-control">
-              <input className="bk-input" value={data.productId || ''} disabled={disabled}
-                placeholder="e.g., WASH" onChange={set('productId')} />
-            </div>
-            <label className="bk-form-label">Interest Rate Type</label>
-            <div className="bk-form-control">
-              <select className="bk-select" value={data.interestRateType || ''} disabled={disabled}
-                onChange={set('interestRateType')}>
+            <Row label="Currency ID">
+              <select
+                className="bk-select"
+                value={data.currencyId || ''}
+                disabled={disabled}
+                onChange={(e) => set('currencyId')(e.target.value)}
+              >
                 <option value="">--Select--</option>
-                <option>Absolute Rate</option>
-                <option>Base Rate</option>
-                <option>Prime Rate</option>
+                <option value="UGX">UGX - Ugandan Shilling</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
               </select>
-            </div>
-          </div>
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Currency ID</label>
-            <div className="bk-form-control">
-              <input className="bk-input" value={data.currencyId || ''} disabled={disabled}
-                placeholder="e.g., UGX" onChange={set('currencyId')} />
-            </div>
-            <label className="bk-form-label">Mark Up Rate</label>
-            <div className="bk-form-control">
-              <div className="bk-input-pct">
-                <input className="bk-input" type="number" min="0" step="0.01"
-                  value={data.markUpRate || 0} disabled={disabled}
-                  onChange={set('markUpRate')} />
-                <span className="bk-input-pct__suffix">%</span>
-              </div>
-            </div>
-          </div>
+            <MoneyInput
+              label="Sanction Amount"
+              value={data.sanctionAmount}
+              disabled={disabled}
+              onChange={set('sanctionAmount')}
+            />
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Sanction Amount</label>
-            <div className="bk-form-control">
-              <div className="bk-input-ugx">
-                <span className="bk-input-ugx__prefix">UGX</span>
-                <input className="bk-input" type="number" min="0" step="0.01"
-                  value={data.sanctionAmount || 0} disabled={disabled}
-                  onChange={set('sanctionAmount')} />
-              </div>
-            </div>
-            <label className="bk-form-label">Interest Rate</label>
-            <div className="bk-form-control">
-              <div className="bk-input-pct">
-                <input className="bk-input" type="number" min="0" step="0.01"
-                  value={data.interestRate || 0} disabled={disabled}
-                  onChange={set('interestRate')} />
-                <span className="bk-input-pct__suffix">%</span>
-              </div>
-            </div>
-          </div>
+            <Row label="Sanction Date">
+              <input
+                className="bk-input"
+                type="date"
+                value={data.sanctionDate || ''}
+                disabled={disabled}
+                onChange={(e) => set('sanctionDate')(e.target.value)}
+              />
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Sanction Date</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="date" value={data.sanctionDate || ''}
-                disabled={disabled} onChange={set('sanctionDate')} />
-            </div>
-            <label className="bk-form-label">Installment Start Date</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="date" value={data.installmentStartDate || ''}
-                disabled={disabled} onChange={set('installmentStartDate')} />
-            </div>
-          </div>
+            <MoneyInput
+              label="Booked Amount"
+              value={data.bookedAmount}
+              disabled={disabled}
+              onChange={set('bookedAmount')}
+            />
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Booked Amount</label>
-            <div className="bk-form-control">
-              <div className="bk-input-ugx">
-                <span className="bk-input-ugx__prefix">UGX</span>
-                <input className="bk-input" type="number" min="0" step="0.01"
-                  value={data.bookedAmount || 0} disabled={disabled}
-                  onChange={set('bookedAmount')} />
-              </div>
-            </div>
-            <label className="bk-form-label">Value Date</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="date" value={data.valueDate || ''}
-                disabled={disabled} onChange={set('valueDate')} />
-            </div>
-          </div>
+            <Row label="Term (Months)">
+              <input
+                className="bk-input"
+                type="number"
+                min="0"
+                value={data.term || 0}
+                disabled={disabled}
+                onChange={(e) => set('term')(e.target.value)}
+              />
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Term (Months)</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="number" min="0" value={data.term || 0}
-                disabled={disabled} onChange={set('term')} />
-            </div>
-            <label className="bk-form-label">Maturity Date</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="date" value={data.maturityDate || ''}
-                disabled={disabled} onChange={set('maturityDate')} />
-            </div>
-          </div>
-
-          <div className="bk-form-row">
-            <label className="bk-form-label">Repayment Frequency</label>
-            <div className="bk-form-control">
-              <select className="bk-select" value={data.repaymentFrequency || ''}
-                disabled={disabled} onChange={set('repaymentFrequency')}>
+            <Row label="Repayment Frequency">
+              <select
+                className="bk-select"
+                value={data.repaymentFrequency || ''}
+                disabled={disabled}
+                onChange={(e) => set('repaymentFrequency')(e.target.value)}
+              >
                 <option value="">--Select--</option>
-                <option>Weekly</option><option>Fortnightly</option>
-                <option>Monthly</option><option>Quarterly</option>
-                <option>Bi-Annual</option><option>Annual</option>
+                <option value="Weekly">Weekly</option>
+                <option value="Fortnightly">Fortnightly</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Annual">Annual</option>
               </select>
-            </div>
-            <label className="bk-form-label">Installment Amount</label>
-            <div className="bk-form-control">
-              <div className="bk-display-num">{data.installmentAmount || '0.00'}</div>
-            </div>
-          </div>
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Calculation Method</label>
-            <div className="bk-form-control">
-              <select className="bk-select" value={data.calculationMethod || ''}
-                disabled={disabled} onChange={set('calculationMethod')}>
+            <Row label="Calculation Method">
+              <select
+                className="bk-select"
+                value={data.calculationMethod || ''}
+                disabled={disabled}
+                onChange={(e) => set('calculationMethod')(e.target.value)}
+              >
                 <option value="">--Select--</option>
-                <option>Flat</option>
-                <option>Reducing</option>
-                <option>Simple Interest</option>
+                <option value="Reducing">Reducing</option>
+                <option value="Flat">Flat</option>
+                <option value="Simple Interest">Simple Interest</option>
               </select>
-            </div>
-            <label className="bk-form-label">Grace Days</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="number" min="0" value={data.graceDays || 0}
-                disabled={disabled} onChange={set('graceDays')} />
-            </div>
+            </Row>
+
+            <MoneyInput
+              label="Net Collateral Value"
+              value={data.netCollateralValue}
+              disabled={disabled}
+              onChange={set('netCollateralValue')}
+              readOnly
+            />
           </div>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Net Collateral Value</label>
-            <div className="bk-form-control">
-              <div className="bk-input-ugx">
-                <span className="bk-input-ugx__prefix">UGX</span>
-                <input className="bk-input" type="number" min="0" step="0.01"
-                  value={data.netCollateralValue || 0} disabled={disabled}
-                  onChange={set('netCollateralValue')} />
-              </div>
-            </div>
-            <label className="bk-form-label">Grace Period</label>
-            <div className="bk-form-control">
-              <input className="bk-input" type="number" min="0" value={data.gracePeriod || 0}
-                disabled={disabled} onChange={set('gracePeriod')} />
-            </div>
-          </div>
+          {/* RIGHT COLUMN */}
+          <div>
+            <Row label="Interest Rate Type">
+              <select
+                className="bk-select"
+                value={data.interestRateType || ''}
+                disabled={disabled}
+                onChange={(e) => set('interestRateType')(e.target.value)}
+              >
+                <option value="">--Select--</option>
+                <option value="Absolute Rate">Absolute Rate</option>
+                <option value="Base Rate">Base Rate</option>
+                <option value="Prime Rate">Prime Rate</option>
+              </select>
+            </Row>
 
-          <div className="bk-form-row">
-            <label className="bk-form-label">Accrued Interest Unpaid</label>
-            <div className="bk-form-control">
-              <div className="bk-display-num">{data.accruedInterestUnpaid || '0.00'}</div>
-            </div>
-            <div /><div />
-          </div>
+            <Row label="Mark Up Rate (%)">
+              <input
+                className="bk-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={data.markUpRate || 0}
+                disabled={disabled}
+                onChange={(e) => set('markUpRate')(e.target.value)}
+              />
+            </Row>
 
+            <Row label="Interest Rate (%)">
+              <input
+                className="bk-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={data.interestRate || 0}
+                disabled={disabled}
+                onChange={(e) => set('interestRate')(e.target.value)}
+              />
+            </Row>
+
+            <Row label="Installment Start Date">
+              <input
+                className="bk-input"
+                type="date"
+                value={data.installmentStartDate || ''}
+                disabled={disabled}
+                onChange={(e) => set('installmentStartDate')(e.target.value)}
+              />
+            </Row>
+
+            <Row label="Value Date">
+              <input
+                className="bk-input"
+                type="date"
+                value={data.valueDate || ''}
+                disabled={disabled}
+                onChange={(e) => set('valueDate')(e.target.value)}
+              />
+            </Row>
+
+            <Row label="Maturity Date">
+              <input
+                className="bk-input"
+                type="date"
+                value={data.maturityDate || ''}
+                disabled={disabled}
+                onChange={(e) => set('maturityDate')(e.target.value)}
+              />
+            </Row>
+
+            <MoneyInput
+              label="Installment Amount"
+              value={data.installmentAmount}
+              disabled={disabled}
+              onChange={set('installmentAmount')}
+              readOnly
+            />
+
+            <MoneyInput
+              label="Accrued Interest Unpaid"
+              value={data.accruedInterestUnpaid}
+              disabled={disabled}
+              onChange={set('accruedInterestUnpaid')}
+              readOnly
+            />
+
+            <Row label="Grace Days">
+              <input
+                className="bk-input"
+                type="number"
+                min="0"
+                value={data.graceDays || 0}
+                disabled={disabled}
+                onChange={(e) => set('graceDays')(e.target.value)}
+              />
+            </Row>
+
+            <Row label="Grace Period (Months)">
+              <input
+                className="bk-input"
+                type="number"
+                min="0"
+                value={data.gracePeriod || 0}
+                disabled={disabled}
+                onChange={(e) => set('gracePeriod')(e.target.value)}
+              />
+            </Row>
+          </div>
         </div>
       </div>
     </div>
