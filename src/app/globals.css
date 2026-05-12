@@ -1,0 +1,2 @@
+/* Global entry: bank module UI (forms, layout, modals). Tailwind is not installed — do not @import "tailwindcss" here. */
+@import "../styles/bk.css";

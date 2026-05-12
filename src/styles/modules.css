@@ -1,0 +1,147 @@
+/* modules.css — Shared layout classes used across Account, SIT, Freeze, Reminders etc.
+   Import this once in index.css or main.tsx */
+
+/* ── am- (Account Maintenance style) ── */
+
+.am-lookup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+}
+
+.am-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 24px;
+}
+
+.am-field { display: flex; flex-direction: column; gap: 3px; }
+.am-field--wide { grid-column: 1 / -1; }
+
+.am-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--bank-text-mid);
+  white-space: nowrap;
+}
+.am-label--req { color: var(--bank-required); }
+
+.am-input-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.am-input-group .ci-input { flex: 1; min-width: 0; }
+.am-input-sm { width: 70px !important; flex: 0 0 70px !important; }
+.am-input-lg { flex: 2 !important; }
+
+.am-readonly {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 8px;
+  background: var(--bank-bg-alt);
+  border: 1px solid var(--bank-border-light);
+  border-radius: var(--r-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--bank-text-mid);
+}
+
+/* Right nav (Client / Account navigation arrows) */
+.am-right-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: var(--actions-width);
+  min-width: var(--actions-width);
+  background: var(--bank-bg-alt);
+  border-left: 1px solid var(--bank-border);
+  padding: 10px 8px;
+  gap: 8px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.am-right-nav__group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--bank-border-light);
+}
+
+.am-nav-arrow {
+  width: 28px; height: 26px;
+  border: 1px solid var(--bank-border);
+  border-radius: var(--r-sm);
+  background: var(--bank-navy-mid);
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.am-nav-arrow:hover { background: var(--bank-gold); }
+
+.am-nav-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--bank-navy);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+  text-align: center;
+}
+
+/* ── sit- (Standing Instruction Transfer style) ── */
+
+/* Label-input-label-input row matching legacy form */
+.sit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.sit-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--bank-text-mid);
+  min-width: 160px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sit-label--req { color: var(--bank-navy); font-weight: 700; }
+
+.sit-label-right {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--bank-text-mid);
+  min-width: 130px;
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.sit-label-right.sit-label--req { color: var(--bank-navy); font-weight: 700; }
+
+.sit-input-sm { width: 80px !important; flex: 0 0 80px !important; }
+.sit-input-lg { flex: 1; min-width: 0; }
+.sit-spacer   { flex: 1; }
+
+.sit-additional-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Transaction action buttons row */
+.sit-txn-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}

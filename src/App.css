@@ -1,0 +1,44 @@
+/* App.css — PRIME CORE layout foundation */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Shell: sidebar + main side by side ── */
+.prime-shell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ── Right side: header + workspace stacked ── */
+.prime-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ── Headers: never grow, never shrink ── */
+.prime-header-group {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Workspace: takes all remaining height, scrolls internally ── */
+.prime-workspace {
+  flex: 1;
+  min-height: 0;        /* critical for nested flex scroll */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

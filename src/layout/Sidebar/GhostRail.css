@@ -1,0 +1,682 @@
+/* GhostRail.css — PRIME CORE ghost rail navigation */
+
+/* ── Rail (always visible, 48px) ── */
+/* ── Reports rail button (bottom of rail) ─────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   REPORTS BUTTON — top of rail, high-visibility
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.rail-reports-wrap {
+  position: relative;
+  padding: 10px 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rail-reports-pinned-wrap {
+  position: relative;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rail-reports-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #f5a623 0%, #e8490f 100%);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(245, 166, 35, 0.35),
+    0 4px 14px rgba(245, 100, 15, 0.45);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, filter 0.18s ease;
+}
+
+.rail-reports-btn:hover {
+  filter: brightness(1.12);
+  box-shadow:
+    0 0 0 2px rgba(245, 166, 35, 0.5),
+    0 6px 20px rgba(245, 100, 15, 0.6);
+  transform: translateY(-1px);
+}
+
+.rail-reports-btn.is-active {
+  filter: brightness(0.9);
+  box-shadow:
+    0 0 0 2px rgba(245, 166, 35, 0.8),
+    0 0 24px rgba(245, 100, 15, 0.5) inset;
+  transform: translateY(0);
+}
+
+.rail-reports-label { flex: 1; text-align: left; }
+
+.rail-reports-btn--pinned {
+  font-size: 12px;
+  padding: 9px 12px;
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   REPORTS BUTTON — top of rail, high-visibility
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.rail-reports-wrap {
+  position: relative;
+  padding: 10px 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rail-reports-pinned-wrap {
+  position: relative;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rail-reports-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #f5a623 0%, #e8490f 100%);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(245, 166, 35, 0.35),
+    0 4px 14px rgba(245, 100, 15, 0.45);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, filter 0.18s ease;
+}
+
+.rail-reports-btn:hover {
+  filter: brightness(1.12);
+  box-shadow:
+    0 0 0 2px rgba(245, 166, 35, 0.5),
+    0 6px 20px rgba(245, 100, 15, 0.6);
+  transform: translateY(-1px);
+}
+
+.rail-reports-btn.is-active {
+  filter: brightness(0.9);
+  box-shadow:
+    0 0 0 2px rgba(245, 166, 35, 0.8),
+    0 0 24px rgba(245, 100, 15, 0.5) inset;
+  transform: translateY(0);
+}
+
+.rail-reports-label { flex: 1; text-align: left; }
+
+.rail-reports-btn--pinned {
+  font-size: 12px;
+  padding: 9px 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REPORTS FLYOUT PANEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ghost-reports-flyout {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 0;
+  width: 290px;
+  max-height: 72vh;
+  background: var(--ghost-panel-bg, #0f1923);
+  border: 1px solid rgba(245, 166, 35, 0.25);
+  border-top: 2px solid #f5a623;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    4px 8px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(245, 166, 35, 0.08);
+  z-index: 200;
+  overflow: hidden;
+  animation: flyout-in 0.15s ease;
+}
+
+@keyframes flyout-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.ghost-reports-flyout-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(245,166,35,0.18) 0%, rgba(232,73,15,0.12) 100%);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.2);
+  color: #f5a623;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ghost-reports-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.ghost-reports-close:hover { color: #fff; }
+
+.ghost-section-count {
+  margin-left: auto;
+  margin-right: 4px;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(245, 166, 35, 0.6);
+  background: rgba(245, 166, 35, 0.1);
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   REPORTS FLYOUT PANEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ghost-rail {
+  width: 48px;
+  height: 100vh;
+  background: #060C1A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid #111827;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 50;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ghost-rail.is-pinned {
+  width: 268px;
+}
+
+/* ── Rail logo ── */
+.rail-logo {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #111827;
+  flex-shrink: 0;
+  overflow: hidden;
+  gap: 10px;
+  padding: 0 12px;
+}
+
+.rail-logo-box {
+  width: 28px;
+  height: 28px;
+  background: #C8A84B;
+  color: #060C1A;
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rail-logo-name {
+  color: #C8A84B;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.2s, width 0.28s;
+}
+
+.ghost-rail.is-pinned .rail-logo-name {
+  opacity: 1;
+  width: 120px;
+}
+
+/* ── Rail icon strip ── */
+.rail-icons {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b transparent;
+}
+
+.rail-icons::-webkit-scrollbar { width: 3px; }
+.rail-icons::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+/* ── Rail icon buttons ── */
+.rail-icon-btn {
+  width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #475569;
+  cursor: pointer;
+  margin: 2px 0;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.rail-icon-btn:hover,
+.rail-icon-btn.is-active {
+  background: rgba(200, 168, 75, 0.12);
+  color: #C8A84B;
+}
+
+.rail-icon-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.8;
+}
+
+/* Gold dot for active section */
+.rail-icon-btn .rail-dot {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C8A84B;
+  display: none;
+}
+
+.rail-icon-btn.is-active .rail-dot {
+  display: block;
+}
+
+/* ── Reports button — pinned at bottom with separator ── */
+.rail-separator {
+  width: 28px;
+  height: 1px;
+  background: #1e293b;
+  margin: 6px 0;
+  flex-shrink: 0;
+}
+
+.rail-icon-btn--reports {
+  color: #475569;
+}
+
+.rail-icon-btn--reports:hover,
+.rail-icon-btn--reports.is-active {
+  background: rgba(99, 179, 237, 0.1);
+  color: #63b3ed;
+}
+
+.rail-icon-btn--reports.is-active .rail-dot {
+  background: #63b3ed;
+}
+
+/* ── Overlay panel ── */
+.ghost-panel {
+  position: fixed;
+  top: 0;
+  left: 48px;
+  width: 260px;
+  height: 100vh;
+  background: #07101f;
+  border-right: 1px solid #1a2233;
+  display: flex;
+  flex-direction: column;
+  z-index: 49;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.ghost-panel.is-open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ghost-rail.is-pinned ~ .ghost-panel {
+  display: none;
+}
+
+/* ── Panel header ── */
+.ghost-panel-header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid #1a2233;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.ghost-panel-title {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.ghost-pin-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #475569;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.ghost-pin-btn:hover {
+  border-color: rgba(200, 168, 75, 0.3);
+  color: #C8A84B;
+}
+
+/* ── Search ── */
+.ghost-search {
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+
+.ghost-search-inner {
+  background: #0d1829;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 7px 10px;
+  gap: 8px;
+}
+
+.ghost-search-inner svg {
+  width: 14px;
+  height: 14px;
+  color: #475569;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.ghost-search-input {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  outline: none;
+  font-size: 0.8rem;
+  width: 100%;
+  font-family: inherit;
+}
+
+.ghost-search-input::placeholder { color: #334155; }
+
+.ghost-search-clear {
+  background: transparent;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.ghost-search-clear:hover { color: #C8A84B; }
+
+/* ── Scroll area ── */
+.ghost-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b transparent;
+  padding-bottom: 16px;
+}
+
+.ghost-scroll::-webkit-scrollbar { width: 3px; }
+.ghost-scroll::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+.ghost-loading-hint {
+  padding: 1rem 14px;
+  color: #475569;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.ghost-module-pill {
+  flex-shrink: 0;
+  margin-left: 6px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+/* ── Section group ── */
+.ghost-section {
+  border-bottom: 1px solid #0f172a;
+}
+
+/* Reports section gets a subtle top accent */
+.ghost-section--reports {
+  border-top: 1px solid #1e293b;
+  margin-top: 4px;
+}
+
+.ghost-section-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ghost-section-btn:hover {
+  background: #0d1829;
+  color: #C8A84B;
+}
+
+.ghost-section-btn.is-open {
+  color: #C8A84B;
+  background: #0d1829;
+}
+
+/* Reports section button uses blue accent */
+.ghost-section--reports .ghost-section-btn:hover,
+.ghost-section--reports .ghost-section-btn.is-open {
+  color: #63b3ed;
+  background: rgba(99, 179, 237, 0.06);
+}
+
+.ghost-section-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ghost-section-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ghost-section-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.8;
+}
+
+.ghost-chevron {
+  font-size: 10px;
+  color: #334155;
+  flex-shrink: 0;
+  transition: transform 0.18s;
+}
+
+.ghost-section-btn.is-open .ghost-chevron {
+  transform: rotate(90deg);
+  color: #C8A84B;
+}
+
+.ghost-section--reports .ghost-section-btn.is-open .ghost-chevron {
+  color: #63b3ed;
+}
+
+/* ── Module items ── */
+.ghost-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ghost-items.is-open {
+  max-height: min(88vh, 14000px);
+}
+
+.ghost-module-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 12px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  font-family: inherit;
+}
+
+/* Depth indentation (kept for search results compatibility) */
+.ghost-module-depth-0 { padding-left: 12px; }
+.ghost-module-depth-1 { padding-left: 24px; border-left: 2px solid rgba(200,168,75,0.12); margin-left: 8px; }
+.ghost-module-depth-2 { padding-left: 36px; border-left: 2px solid rgba(200,168,75,0.08); margin-left: 8px; }
+
+.ghost-module-btn:hover {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+.ghost-module-id {
+  color: #C8A84B;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  background: #111827;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: right;
+}
+
+.ghost-module-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* ── Type pills ── */
+.ghost-type-pill {
+  flex-shrink: 0;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #334155;
+  color: #94a3b8;
+}
+
+.ghost-type-pill--D { border-color: rgba(96,165,250,0.35);  color: #93c5fd; }
+.ghost-type-pill--V { border-color: rgba(52,211,153,0.35);  color: #6ee7b7; }
+.ghost-type-pill--R { border-color: rgba(251,191,36,0.4);   color: #fcd34d; }
+.ghost-type-pill--U { border-color: #475569;                color: #64748b; }
+
+/* ── Search result label ── */
+.ghost-result-label {
+  font-size: 0.62rem;
+  color: #334155;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 14px 4px;
+}
+
+/* ── Pinned inline panel ── */
+.ghost-panel-inline {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.ghost-rail.is-pinned .rail-icons {
+  display: none;
+}
+
+.ghost-rail.is-pinned .ghost-panel-inline {
+  display: flex;
+}

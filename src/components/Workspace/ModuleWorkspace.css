@@ -1,0 +1,45 @@
+/* ModuleWorkspace.css */
+
+.mw-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;          /* fills prime-workspace which is flex:1 */
+  overflow: hidden;
+}
+
+.mw-panels {
+  flex: 1;
+  position: relative;
+  min-height: 0;         /* critical — lets flex child shrink below content size */
+  overflow: hidden;
+}
+
+/* All panels stacked absolutely, only active one visible */
+.mw-panel {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  background: #f4f6f9;
+}
+
+.mw-panel--active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Placeholder for unimplemented modules */
+.mw-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  color: #94a3b8;
+}
+
+.mw-placeholder span { font-size: 48px; }
+.mw-placeholder p    { font-size: 16px; font-weight: 600; color: #475569; margin: 0; }
+.mw-placeholder small{ font-size: 12px; color: #94a3b8; }

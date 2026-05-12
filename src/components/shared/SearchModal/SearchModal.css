@@ -1,0 +1,295 @@
+/* SearchModal.css — Shared search popup */
+
+.sm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 24, 41, 0.45);
+  backdrop-filter: blur(1px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 20px 20px;
+}
+
+.sm-modal {
+  background: #f5f0e8;
+  border: 2px solid var(--bank-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  width: 680px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 100px);
+  overflow: hidden;
+  animation: slideUp .18s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Header ── */
+.sm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--bank-panel-head-bg);
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--bank-gold);
+}
+
+.sm-title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--bank-panel-head-text);
+  letter-spacing: 0.03em;
+}
+
+.sm-header-close {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--r-sm);
+  color: var(--bank-panel-head-text);
+  width: 24px; height: 24px;
+  cursor: pointer; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.sm-header-close:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Filters ── */
+.sm-filters {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--bank-border);
+  flex-shrink: 0;
+  background: #fdf9f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sm-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sm-filter-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--bank-navy);
+  min-width: 120px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sm-operator {
+  height: 26px;
+  border: 1px solid var(--bank-border);
+  border-radius: var(--r-sm);
+  background: var(--bank-bg-input);
+  font-size: var(--font-size-sm);
+  padding: 0 6px;
+  width: 110px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.sm-filter-input {
+  flex: 1;
+  height: 26px;
+  border: 1px solid var(--bank-border);
+  border-radius: var(--r-sm);
+  background: var(--bank-bg-input);
+  font-size: var(--font-size-sm);
+  padding: 0 8px;
+  color: var(--bank-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.sm-filter-input:focus {
+  border-color: var(--bank-navy-light);
+  box-shadow: 0 0 0 2px rgba(30,74,138,0.15);
+}
+
+.sm-filter-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.sm-search-btn {
+  padding: 5px 28px;
+  background: var(--bank-navy-mid);
+  color: #fff;
+  border: 1px solid var(--bank-navy-dark);
+  border-radius: var(--r-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.sm-search-btn:hover { background: var(--bank-navy-light); }
+
+/* ── Results ── */
+.sm-results-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sm-results-label {
+  background: var(--bank-panel-head-bg);
+  color: var(--bank-panel-head-text);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  flex-shrink: 0;
+}
+
+.sm-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bank-border) transparent;
+}
+
+.sm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.sm-th {
+  background: var(--bank-panel-head-bg);
+  color: var(--bank-panel-head-text);
+  padding: 6px 10px;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.sm-th--num {
+  width: 36px;
+  text-align: center;
+}
+
+.sm-td {
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--bank-border-light);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.sm-td--num {
+  text-align: center;
+  color: var(--bank-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.sm-td--mono {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.sm-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sm-row:hover { background: var(--bank-gold-pale); }
+
+.sm-row--selected td {
+  background: #b8d4f0 !important;
+  color: #0a1a3a;
+}
+
+.sm-empty {
+  text-align: center;
+  color: var(--bank-text-muted);
+  padding: 24px;
+  font-style: italic;
+  font-size: var(--font-size-sm);
+}
+
+/* ── Footer ── */
+.sm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--bank-bg-alt);
+  border-top: 1px solid var(--bank-border);
+  flex-shrink: 0;
+}
+
+.sm-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--bank-text-muted);
+}
+
+.sm-page-btn {
+  width: 28px; height: 24px;
+  border: 1px solid var(--bank-border);
+  border-radius: var(--r-sm);
+  background: var(--bank-navy-mid);
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.sm-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.sm-page-btn:not(:disabled):hover { background: var(--bank-gold); }
+
+.sm-page-info {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.sm-footer-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.sm-btn {
+  padding: 5px 20px;
+  border-radius: var(--r-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.sm-btn--ok {
+  background: var(--bank-navy-mid);
+  color: #fff;
+  border-color: var(--bank-navy-dark);
+}
+.sm-btn--ok:hover:not(:disabled) { background: var(--bank-navy-light); }
+.sm-btn--ok:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.sm-btn--cancel {
+  background: #fff;
+  color: var(--bank-text-mid);
+  border-color: var(--bank-border);
+}
+.sm-btn--cancel:hover { background: var(--bank-bg-alt); }
