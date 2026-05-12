@@ -25,7 +25,12 @@
       "@modules/*": ["src/modules/*"],
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@account/*": ["src/components/Account/*"]
+      "@account/*": ["src/components/Account/*"],
+      "@loan/*": ["src/components/Loan/*"],
+      "@customer/*": ["src/components/CustomerInformation/*"],
+      "@deposit/*": ["src/components/Deposit/*"],
+      "@shared/*": ["src/components/shared/*"],
+      "@ui/*": ["src/components/ui/*"]
     },
 
     /* Linting */

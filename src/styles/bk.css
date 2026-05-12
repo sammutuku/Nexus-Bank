@@ -463,12 +463,13 @@ html, body {
   background: transparent;
   flex: 1;
 }
+/* Collapsed = icon-only strip (44px). Actions stay reachable — no labels. */
 .bk-actions-wrap--collapsed .bk-actions-wrap__inner {
-  width: 0 !important;
-  min-width: 0 !important;
-  max-width: 0;
-  opacity: 0;
-  pointer-events: none;
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px;
+  opacity: 1;
+  pointer-events: auto;
   overflow: hidden;
 }
 .bk-shell-toggle--between-main-and-actions {
@@ -1169,6 +1170,48 @@ html, body {
 }
 .bk-actions__btn--cancel::before { background: rgba(239,68,68,.18); }
 .bk-actions__btn--cancel:hover   { border-color: rgba(252,165,165,.45); color: #fecaca; }
+
+/* ── Icon-only collapsed mode ────────────────────────────────────────────────── */
+/* Applied when actionsOpen=false. Keeps all buttons clickable at 44px width.    */
+.bk-actions--icon-only {
+  padding: 10px 4px 12px;
+  width: 44px;
+  min-width: 44px;
+}
+.bk-actions--icon-only .bk-actions__group-label,
+.bk-actions--icon-only .bk-actions__btn-label {
+  display: none;
+}
+.bk-actions--icon-only .bk-actions__divider {
+  margin: 3px 0;
+}
+.bk-actions--icon-only .bk-actions__nav {
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+.bk-actions--icon-only .bk-actions__nav-btn {
+  width: 34px;
+  height: 26px;
+  font-size: 11px;
+}
+.bk-actions--icon-only .bk-actions__btn {
+  padding: 10px 0;
+  border-radius: 6px;
+}
+.bk-actions--icon-only .bk-actions__btn-icon {
+  font-size: 16px;
+}
+
+/* Account Maintenance right-nav labels hidden when icon-only */
+.am-right-nav--icon-only .am-nav-label {
+  display: none;
+}
+.am-right-nav--icon-only .am-right-nav__group {
+  justify-content: center;
+  gap: 3px;
+}
 
 /* ── Buttons ─────────────────────────────────────────────────────────────────── */
 .bk-btn {

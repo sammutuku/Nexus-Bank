@@ -10,6 +10,7 @@ import ActivateDormantAccount from '@account/ActivateDormantAccount';
 import AccountReminders       from '@account/AccountReminders';
 import StandingInstructionType     from '@account/StandingInstructionType';
 import StandingInstructionTransfer from '@account/StandingInstructionTransfer';
+import loan from '@loan/LoanMaintenance';
 
 
 // Creates a STABLE named component per module — inline arrows cause reconciler bugs
@@ -219,7 +220,7 @@ export const COMPONENT_MAP: Record<number, ModuleMeta> = {
   4535: { id: 4535, name: "Collaterals", type: "V", component: createPlaceholder(4535, "Collaterals") },
   4561: { id: 4561, name: "Loan Penalty Interest Waive Off History", type: "V", component: createPlaceholder(4561, "Loan Penalty Interest Waive Off History") },
   4001: { id: 4001, name: "Separator", type: "D", component: createPlaceholder(4001, "Separator") },
-  4300: { id: 4300, name: "Loan Maintenance", type: "D", component: createPlaceholder(4300, "Loan Maintenance") },
+  4300: { id: 4300, name: "Loan Maintenance", type: "D", component: loan },
   4405: { id: 4405, name: "Loan Disbursement Instruction", type: "D", component: createPlaceholder(4405, "Loan Disbursement Instruction") },
   4425: { id: 4425, name: "Loan Restructure", type: "D", component: createPlaceholder(4425, "Loan Restructure") },
   4555: { id: 4555, name: "Loan / Disbursement - Reversal", type: "D", component: createPlaceholder(4555, "Loan / Disbursement - Reversal") },

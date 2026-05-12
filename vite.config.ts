@@ -15,6 +15,11 @@ export default defineConfig({
       '@constants': path.resolve(__dirname, './src/constants'),
       '@theme': path.resolve(__dirname, './src/theme'),
       '@types': path.resolve(__dirname, './src/types'),
+      '@loan': path.resolve(__dirname, './src/components/Loan'),
+      '@customer': path.resolve(__dirname, './src/components/CustomerInformation'),
+      '@deposit': path.resolve(__dirname, './src/components/Deposit'),	  
+      '@shared': path.resolve(__dirname, './src/components/shared'),
+      '@ui': path.resolve(__dirname, './src/components/ui'),
     },
   },
 })
