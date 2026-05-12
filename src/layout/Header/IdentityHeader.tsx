@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { BarChart3, Bell, ChevronRight, X } from 'lucide-react';
 import {
+  loadModules,
   moduleRegistry,
   getModulesForMainMenu,
   REPORTS_MENU_ID,
@@ -234,7 +235,13 @@ const IdentityHeader = ({
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const allModules = useMemo(() => Object.values(moduleRegistry), []);
+  const [modulesLoaded, setModulesLoaded] = useState(false);
+
+  useEffect(() => {
+    loadModules().then(() => setModulesLoaded(true));
+  }, []);
+
+  const allModules = useMemo(() => Object.values(moduleRegistry), [modulesLoaded]);
   const hasModule = moduleId != null;
   const isLocked = activeLock?.activeId !== null;
   const unreadCount = notifications.filter(n => !n.read).length;
