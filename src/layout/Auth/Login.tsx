@@ -67,7 +67,7 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      if (userId === "admin" && password === "1234") {
+      if (userId === "BANTU" && password === "Pass@1234") {
         setSuccess("Login successful...");
         setTimeout(() => onLoginSuccess(), 800);
       } else {

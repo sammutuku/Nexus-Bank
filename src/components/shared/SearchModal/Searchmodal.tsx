@@ -14,9 +14,12 @@ const PAGE_SIZE = 15;
 const SearchModal: React.FC<SearchModalProps> = ({ isOpen, entityType, onSelect, onClose }) => {
   const config = SEARCH_CONFIGS[entityType];
 
-  // Build initial filter state from config
-  const initFilters = () =>
-    config.filters.map(f => ({ key: f.key, operator: f.operators[0] as FilterOperator, value: '' }));
+  // Safe init — guards against missing entityType in SEARCH_CONFIGS.
+  // Passed as a function ref so React calls it once on mount, not on every render.
+  const initFilters = (): { key: string; operator: FilterOperator; value: string }[] =>
+    config
+      ? config.filters.map(f => ({ key: f.key, operator: f.operators[0] as FilterOperator, value: '' }))
+      : [];
 
   const [filters, setFilters] = useState(initFilters);
   const [results, setResults] = useState<Record<string, string>[]>([]);
@@ -26,8 +29,8 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, entityType, onSelect,
 
   // Reset when entity type changes or modal opens
   useEffect(() => {
-    if (isOpen) {
-      setFilters(initFilters());
+    if (isOpen && config) {
+      setFilters(config.filters.map(f => ({ key: f.key, operator: f.operators[0] as FilterOperator, value: '' })));
       setResults([]);
       setSearched(false);
       setSelectedIdx(null);
@@ -72,6 +75,21 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, entityType, onSelect,
   const pageResults = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   if (!isOpen) return null;
+
+  // Guard: entityType not registered in SEARCH_CONFIGS — fail gracefully
+  if (!config) {
+    console.warn(`[SearchModal] No config found for entityType: "${entityType}"`);
+    return (
+      <div className="sm-overlay" onClick={onClose}>
+        <div className="sm-modal" style={{ maxWidth: 400, padding: 32, textAlign: 'center' }}>
+          <p style={{ color: 'var(--bank-text-muted)', marginBottom: 16 }}>
+            Search not configured for <strong>{entityType}</strong>
+          </p>
+          <button className="sm-btn sm-btn--cancel" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sm-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>

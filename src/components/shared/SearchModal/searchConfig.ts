@@ -13,7 +13,9 @@ export type SearchEntityType =
   | 'transaction'
   | 'workflow'
   | 'application'
-  | 'siType';
+  | 'siType'
+  | 'loanSeries'
+  | 'fundId';
 
 export type FilterOperator = 'Like' | 'Equal' | 'Starts With' | 'Ends With';
 
@@ -261,6 +263,52 @@ export const SEARCH_CONFIGS: Record<SearchEntityType, SearchEntityConfig> = {
       { siTypeId: 'SI002', siTypeName: 'Loan Repayment',        transferType: 'Internal' },
       { siTypeId: 'SI003', siTypeName: 'Utility Payment',       transferType: 'External' },
       { siTypeId: 'SI004', siTypeName: 'School Fees Transfer',  transferType: 'Internal' },
+    ],
+  },
+  
+    loanSeries: {
+    title: 'Loan Series',
+    filters: [
+      { key: 'seriesNumber', label: 'Series Number', operators: ['Like', 'Equal', 'Starts With'] },
+      { key: 'loanRefNo',    label: 'Loan Ref No',   operators: ['Like', 'Equal'] },
+      { key: 'clientName',   label: 'Client Name',   operators: ['Like', 'Starts With'] },
+    ],
+    columns: [
+      { key: 'seriesNumber', label: 'Series',     width: '100px', mono: true },
+      { key: 'loanRefNo',    label: 'Loan Ref No', width: '140px', mono: true },
+      { key: 'clientName',   label: 'Client Name' },
+      { key: 'accountNumber',label: 'Account No',  width: '140px', mono: true },
+      { key: 'status',       label: 'Status',      width: '100px' },
+    ],
+    mockData: [
+      { seriesNumber: '1', loanRefNo: 'LN000001', clientName: 'BAGUMA ROBINAH',     accountNumber: '42000000701', status: 'Active' },
+      { seriesNumber: '2', loanRefNo: 'LN000002', clientName: 'KABAHUMA ANNET',     accountNumber: '42000000812', status: 'Active' },
+      { seriesNumber: '1', loanRefNo: 'LN000003', clientName: 'BWAMBALE SAMSON',    accountNumber: '42000000923', status: 'Closed' },
+      { seriesNumber: '3', loanRefNo: 'LN000004', clientName: 'KATUSABE LUCY',      accountNumber: '42000001034', status: 'Active' },
+      { seriesNumber: '1', loanRefNo: 'LN000005', clientName: 'ALIGANYIRA JOHN',    accountNumber: '42000001145', status: 'Active' },
+    ],
+  },
+  
+  fundId: {
+    title: 'Fund ID',
+    filters: [
+      { key: 'seriesNumber', label: 'Series Number', operators: ['Like', 'Equal', 'Starts With'] },
+      { key: 'loanRefNo',    label: 'Loan Ref No',   operators: ['Like', 'Equal'] },
+      { key: 'clientName',   label: 'Client Name',   operators: ['Like', 'Starts With'] },
+    ],
+    columns: [
+      { key: 'seriesNumber', label: 'Series',     width: '100px', mono: true },
+      { key: 'loanRefNo',    label: 'Loan Ref No', width: '140px', mono: true },
+      { key: 'clientName',   label: 'Client Name' },
+      { key: 'accountNumber',label: 'Account No',  width: '140px', mono: true },
+      { key: 'status',       label: 'Status',      width: '100px' },
+    ],
+    mockData: [
+      { seriesNumber: '1', loanRefNo: 'LN000001', clientName: 'BAGUMA ROBINAH',     accountNumber: '42000000701', status: 'Active' },
+      { seriesNumber: '2', loanRefNo: 'LN000002', clientName: 'KABAHUMA ANNET',     accountNumber: '42000000812', status: 'Active' },
+      { seriesNumber: '1', loanRefNo: 'LN000003', clientName: 'BWAMBALE SAMSON',    accountNumber: '42000000923', status: 'Closed' },
+      { seriesNumber: '3', loanRefNo: 'LN000004', clientName: 'KATUSABE LUCY',      accountNumber: '42000001034', status: 'Active' },
+      { seriesNumber: '1', loanRefNo: 'LN000005', clientName: 'ALIGANYIRA JOHN',    accountNumber: '42000001145', status: 'Active' },
     ],
   },
 };

@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useModuleTab } from '@hooks/useModuleTab';
-import SearchButton from '../shared/SearchModal/SearchButton';
 import ActionButtons from '../ui/ActionButtons';
+import ModuleSidebar from '../shared/ModuleSidebar';
+import AccountHeader from './AccountHeader';
 import StatementView from './modals/StatementView';
 import ClientPortfolio from './modals/ClientPortfolio';
 import AccountNotes from './modals/AccountNotes';
@@ -13,20 +14,17 @@ interface AccountRecord {
   clientId: string; clientName: string;
   productId: string; productName: string;
   accountNumber: string;
-  // Account Details
   shortName: string; address1: string; address2: string;
   cityArea: string; country: string; phone1: string;
   faxNo: string; emailId: string; phone2: string;
   mobile: string; contactPerson: string;
   operatingInstructions: string; accountOfficer: string;
   operatingMode: string; accountClass: string;
-  // Additional
   unclearBalance: string; unSupervisedCredits: string;
   unSupervisedDebits: string; freezeAmount: string;
   drawingPower: string; currencyId: string;
   totalBalance: string; minimumBalance: string;
   openDate: string; depositBalance: string;
-  // Audit
   createdBy: string; createdOn: string;
   supervisedBy: string; supervisedOn: string;
 }
@@ -44,27 +42,13 @@ const INITIAL: AccountRecord = {
   createdBy: '', createdOn: '', supervisedBy: '', supervisedOn: '',
 };
 
-type SubModal = 'documents' | 'signatories' | 'sigJointLimits' | 'closing' |
-  'blockUnblock' | 'migrateClient' | 'specialConditions' | 'accountNotes' | 'legal' |
-  'statementView' | 'clientPortfolio' | null;
+// SubModal is now just the module ID (number) of the selected child, or null
+type SubModal = number | null;
 
-const SIDEBAR_ITEMS = {
-  DataEntry: [
-    { key: 'documents',        label: 'Documents' },
-    { key: 'signatories',      label: 'Signatories' },
-    { key: 'sigJointLimits',   label: 'Signatories Joint Limits' },
-    { key: 'closing',          label: 'Closing' },
-    { key: 'blockUnblock',     label: 'Blocking / Unblocking' },
-    { key: 'migrateClient',    label: 'Migrate Client' },
-    { key: 'specialConditions',label: 'Special Conditions' },
-    { key: 'accountNotes',     label: 'Account Notes' },
-    { key: 'legal',            label: 'Legal' },
-  ],
-  View: [
-    { key: 'statementView',   label: 'Statement View' },
-    { key: 'clientPortfolio', label: 'Client Portfolio' },
-  ],
-};
+// Sidebar items are now driven dynamically from the registry lock-parent tree.
+// ModuleSidebar reads children of lockModuleId=1300 from moduleRegistry.
+// The subModal key is the module ID as a number (e.g. 1305 = Account Notes).
+// Known modals still rendered inline; unknowns fall through to the generic placeholder.
 
 const SPECIAL_CONDITIONS = [
   'Reverse Written Off Recovery', 'Apply Special Credit Interest Rate',
@@ -102,7 +86,13 @@ const AccountMaintenance: React.FC = () => {
   const [rec, setRec] = useState<AccountRecord>({ ...INITIAL });
   const [mode, setMode] = useState<AppMode>('view');
   const [subModal, setSubModal] = useState<SubModal>(null);
+  const [subModalName, setSubModalName] = useState<string>('');
   const [activeSidebar, setActiveSidebar] = useState('');
+
+  // ── Panel visibility — collapsed by default for maximum workspace ───────────
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(false);
+
   const [specialConditions, setSpecialConditions] = useState<boolean[]>(
     new Array(SPECIAL_CONDITIONS.length).fill(false)
   );
@@ -116,16 +106,17 @@ const AccountMaintenance: React.FC = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleSave = () => { setMode('view'); showToast('Account record saved'); };
-  const handleAdd  = () => { setRec({ ...INITIAL }); setMode('add'); };
-  const handleEdit = () => { if (mode === 'view') setMode('edit'); };
-  const handleView = () => setMode('view');
-  const handleClose = () => { setMode('view'); showToast('Changes discarded'); };
-  const handleCancel = () => mode === 'add' ? handleAdd() : setMode('view');
+  const handleSave   = () => { setMode('view'); showToast('Account record saved'); };
+  const handleAdd    = () => { setRec({ ...INITIAL }); setMode('add'); };
+  const handleEdit   = () => { if (mode === 'view') setMode('edit'); };
+  const handleView   = () => setMode('view');
+  const handleClose  = () => { setMode('view'); showToast('Changes discarded'); };
+  const handleCancel = () => (mode === 'add' ? handleAdd() : setMode('view'));
 
-  const openSub = (key: string) => {
-    setActiveSidebar(key);
-    setSubModal(key as SubModal);
+  const openSub = (moduleId: number, name: string) => {
+    setActiveSidebar(String(moduleId));
+    setSubModal(moduleId);
+    setSubModalName(name);
   };
 
   return (
@@ -138,149 +129,139 @@ const AccountMaintenance: React.FC = () => {
       </div>
 
       <div className="bk-layout">
-        {/* Left sidebar */}
-        <nav className="bk-sidebar">
-          {Object.entries(SIDEBAR_ITEMS).map(([section, items]) => (
-            <React.Fragment key={section}>
-              <div className="bk-sidebar__section-header">{section}</div>
-              {items.map(item => (
-                <div
-                  key={item.key}
-                  className={`bk-sidebar__item ${activeSidebar === item.key ? 'bk-sidebar__item--active' : ''}`}
-                  onClick={() => openSub(item.key)}
-                >
-                  {item.label}
-                </div>
-              ))}
-            </React.Fragment>
-          ))}
-          <div className="bk-sidebar__footer">BANTU MENU</div>
-        </nav>
 
-        {/* Main content */}
+        {/* ── Collapsible left sidebar (collapsed by default) ── */}
+        <div className={`bk-sidebar-wrap${sidebarOpen ? '' : ' bk-sidebar-wrap--collapsed'}`}>
+          <ModuleSidebar
+            lockModuleId={1300}
+            activeSidebar={activeSidebar}
+            onSelect={openSub}
+          />
+          <button
+            type="button"
+            className="bk-shell-toggle bk-shell-toggle--between-main-and-sidebar"
+            aria-expanded={sidebarOpen}
+            title={sidebarOpen ? 'Hide sub menu' : 'Show sub menu'}
+            onClick={() => setSidebarOpen(o => !o)}
+          >
+            {sidebarOpen ? '«' : '»'}
+          </button>
+        </div>
+
+        {/* ── Main content ── */}
         <main className="bk-main">
-          <div className="bk-tab-content">
 
-            {/* Lookup row */}
-            <div className="bk-panel">
-              <div className="am-lookup-grid">
-                <Field label="Branch ID" required>
-                  <div className="am-input-group">
-                    <input className="bk-input am-input-sm" value={rec.branchId} disabled={isDisabled}
-                      onChange={e => patch({ branchId: e.target.value })} />
-                    <input className="bk-input" value={rec.branchName} disabled={isDisabled}
-                      onChange={e => patch({ branchName: e.target.value })} />
-                    <SearchButton entityType="branch"
-                      onSelect={r => patch({ branchId: r.branchId, branchName: r.branchName })}
-                      disabled={isDisabled} />
-                  </div>
-                </Field>
-                <Field label="Client ID" required>
-                  <div className="am-input-group">
-                    <input className="bk-input am-input-sm" value={rec.clientId} disabled={isDisabled}
-                      onChange={e => patch({ clientId: e.target.value })} />
-                    <SearchButton entityType="client"
-                      onSelect={r => patch({ clientId: r.clientId, clientName: r.name })}
-                      disabled={isDisabled} />
-                  </div>
-                </Field>
-                <Field label="Product ID" required>
-                  <div className="am-input-group">
-                    <input className="bk-input am-input-sm" value={rec.productId} disabled={isDisabled}
-                      onChange={e => patch({ productId: e.target.value })} />
-                    <input className="bk-input" value={rec.productName} disabled={isDisabled}
-                      onChange={e => patch({ productName: e.target.value })} />
-                    <SearchButton entityType="product"
-                      onSelect={r => patch({ productId: r.productId, productName: r.productName })}
-                      disabled={isDisabled} />
-                  </div>
-                </Field>
-                <Field label="Account Number" required>
-                  <div className="am-input-group">
-                    <input className="bk-input" value={rec.accountNumber} disabled={isDisabled}
-                      onChange={e => patch({ accountNumber: e.target.value })} />
-                    <SearchButton entityType="account"
-                      onSelect={r => patch({ accountNumber: r.accountId })}
-                      disabled={isDisabled} />
-                  </div>
-                </Field>
-              </div>
-            </div>
+          {/* ── Uniform header — matches CI-KYC Onboarding pattern ── */}
+          <AccountHeader
+            rec={rec}
+            disabled={isDisabled}
+            onChange={patch}
+          />
+
+          <div className="bk-tab-content">
 
             {/* Account Details */}
             <div className="bk-panel">
               <div className="bk-panel__header">Account Details</div>
               <div className="bk-panel__body">
-                <div className="am-form-grid">
-                  <Field label="Short Name">
-                    <input className="bk-input" value={rec.shortName} disabled={isDisabled}
-                      onChange={e => patch({ shortName: e.target.value })} />
-                  </Field>
-                  <Field label="Address 1" required>
-                    <input className="bk-input" value={rec.address1} disabled={isDisabled}
-                      onChange={e => patch({ address1: e.target.value })} />
-                  </Field>
-                  <Field label="Address 2">
-                    <input className="bk-input" value={rec.address2} disabled={isDisabled}
-                      onChange={e => patch({ address2: e.target.value })} />
-                  </Field>
-                  <Field label="City/Area">
-                    <select className="bk-select" value={rec.cityArea} disabled={isDisabled}
-                      onChange={e => patch({ cityArea: e.target.value })}>
-                      <option value="">--Select--</option>
-                      <option>Kampala</option><option>Fort Portal</option>
-                      <option>Kasese</option><option>Hoima</option>
-                    </select>
-                  </Field>
-                  <Field label="Phone #1">
-                    <input className="bk-input" value={rec.phone1} disabled={isDisabled}
-                      onChange={e => patch({ phone1: e.target.value })} />
-                  </Field>
-                  <Field label="Fax No">
-                    <input className="bk-input" value={rec.faxNo} disabled={isDisabled}
-                      onChange={e => patch({ faxNo: e.target.value })} />
-                  </Field>
-                  <Field label="Email ID">
-                    <input className="bk-input" type="email" value={rec.emailId} disabled={isDisabled}
-                      onChange={e => patch({ emailId: e.target.value })} />
-                  </Field>
-                  <Field label="Phone #2">
-                    <input className="bk-input" value={rec.phone2} disabled={isDisabled}
-                      onChange={e => patch({ phone2: e.target.value })} />
-                  </Field>
-                  <Field label="Mobile">
-                    <input className="bk-input" value={rec.mobile} disabled={isDisabled}
-                      onChange={e => patch({ mobile: e.target.value })} />
-                  </Field>
-                  <Field label="Contact Person">
-                    <input className="bk-input" value={rec.contactPerson} disabled={isDisabled}
-                      onChange={e => patch({ contactPerson: e.target.value })} />
-                  </Field>
-                  <Field label="Operating Instructions">
-                    <input className="bk-input" value={rec.operatingInstructions} disabled={isDisabled}
-                      onChange={e => patch({ operatingInstructions: e.target.value })} />
-                  </Field>
-                  <Field label="Account Officer">
-                    <select className="bk-select" value={rec.accountOfficer} disabled={isDisabled}
-                      onChange={e => patch({ accountOfficer: e.target.value })}>
-                      <option value="">--Select--</option>
-                      <option>BANTU</option><option>KAO106</option>
-                    </select>
-                  </Field>
-                  <Field label="Operating Mode" required>
-                    <select className="bk-select" value={rec.operatingMode} disabled={isDisabled}
-                      onChange={e => patch({ operatingMode: e.target.value })}>
-                      <option value="">--Select--</option>
-                      <option>Self</option><option>Joint</option><option>Either</option>
-                    </select>
-                  </Field>
-                  <Field label="Account Class" required>
-                    <select className="bk-select" value={rec.accountClass} disabled={isDisabled}
-                      onChange={e => patch({ accountClass: e.target.value })}>
-                      <option value="">--Select--</option>
-                      <option>Personal</option><option>Corporate</option><option>Group</option>
-                    </select>
-                  </Field>
+                <div className="bk-form-2col">
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Short Name</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.shortName} disabled={isDisabled}
+                        onChange={e => patch({ shortName: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label bk-form-label--required">Address 1</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.address1} disabled={isDisabled}
+                        onChange={e => patch({ address1: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Address 2</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.address2} disabled={isDisabled}
+                        onChange={e => patch({ address2: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label">City/Area</label>
+                    <div className="bk-form-control">
+                      <select className="bk-select" value={rec.cityArea} disabled={isDisabled}
+                        onChange={e => patch({ cityArea: e.target.value })}>
+                        <option value="">--Select--</option>
+                        <option>Kampala</option><option>Fort Portal</option>
+                        <option>Kasese</option><option>Hoima</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Phone #1</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.phone1} disabled={isDisabled}
+                        onChange={e => patch({ phone1: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label">Fax No</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.faxNo} disabled={isDisabled}
+                        onChange={e => patch({ faxNo: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Email ID</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" type="email" value={rec.emailId} disabled={isDisabled}
+                        onChange={e => patch({ emailId: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label">Phone #2</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.phone2} disabled={isDisabled}
+                        onChange={e => patch({ phone2: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Mobile</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.mobile} disabled={isDisabled}
+                        onChange={e => patch({ mobile: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label">Contact Person</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.contactPerson} disabled={isDisabled}
+                        onChange={e => patch({ contactPerson: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Operating Instructions</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.operatingInstructions} disabled={isDisabled}
+                        onChange={e => patch({ operatingInstructions: e.target.value })} />
+                    </div>
+                    <label className="bk-form-label">Account Officer</label>
+                    <div className="bk-form-control">
+                      <select className="bk-select" value={rec.accountOfficer} disabled={isDisabled}
+                        onChange={e => patch({ accountOfficer: e.target.value })}>
+                        <option value="">--Select--</option>
+                        <option>BANTU</option><option>KAO106</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label bk-form-label--required">Operating Mode</label>
+                    <div className="bk-form-control">
+                      <select className="bk-select" value={rec.operatingMode} disabled={isDisabled}
+                        onChange={e => patch({ operatingMode: e.target.value })}>
+                        <option value="">--Select--</option>
+                        <option>Self</option><option>Joint</option><option>Either</option>
+                      </select>
+                    </div>
+                    <label className="bk-form-label bk-form-label--required">Account Class</label>
+                    <div className="bk-form-control">
+                      <select className="bk-select" value={rec.accountClass} disabled={isDisabled}
+                        onChange={e => patch({ accountClass: e.target.value })}>
+                        <option value="">--Select--</option>
+                        <option>Personal</option><option>Corporate</option><option>Group</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -289,20 +270,40 @@ const AccountMaintenance: React.FC = () => {
             <div className="bk-panel">
               <div className="bk-panel__header">Additional Information</div>
               <div className="bk-panel__body">
-                <div className="am-form-grid">
-                  <ReadField label="Unclear Balance"       value={rec.unclearBalance} />
-                  <ReadField label="Currency ID"           value={rec.currencyId} />
-                  <ReadField label="Un Supervised Credits" value={rec.unSupervisedCredits} />
-                  <ReadField label="Total Balance"         value={rec.totalBalance} />
-                  <ReadField label="Un Supervised Debits"  value={rec.unSupervisedDebits} />
-                  <ReadField label="Minimum Balance"       value={rec.minimumBalance} />
-                  <ReadField label="Freeze Amount"         value={rec.freezeAmount} />
-                  <Field label="Open Date">
-                    <input className="bk-input" value={rec.openDate} disabled={isDisabled}
-                      onChange={e => patch({ openDate: e.target.value })} />
-                  </Field>
-                  <ReadField label="Drawing Power"         value={rec.drawingPower} />
-                  <ReadField label="Deposit Balance"       value={rec.depositBalance} />
+                <div className="bk-form-2col">
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Unclear Balance</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.unclearBalance}</span></div>
+                    <label className="bk-form-label">Currency ID</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.currencyId}</span></div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Un Supervised Credits</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.unSupervisedCredits}</span></div>
+                    <label className="bk-form-label">Total Balance</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.totalBalance}</span></div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Un Supervised Debits</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.unSupervisedDebits}</span></div>
+                    <label className="bk-form-label">Minimum Balance</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.minimumBalance}</span></div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Freeze Amount</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.freezeAmount}</span></div>
+                    <label className="bk-form-label">Open Date</label>
+                    <div className="bk-form-control">
+                      <input className="bk-input" value={rec.openDate} disabled={isDisabled}
+                        onChange={e => patch({ openDate: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="bk-form-row">
+                    <label className="bk-form-label">Drawing Power</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.drawingPower}</span></div>
+                    <label className="bk-form-label">Deposit Balance</label>
+                    <div className="bk-form-control"><span className="am-readonly">{rec.depositBalance}</span></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -324,39 +325,57 @@ const AccountMaintenance: React.FC = () => {
               </div>
             </div>
 
-          </div>{/* end tab-content */}
+          </div>
         </main>
 
-        {/* Right nav: Client + Account search */}
-        <div className="am-right-nav">
-          <div className="am-right-nav__group">
-            <button className="am-nav-arrow">◀</button>
-            <span className="am-nav-label">Client</span>
-            <button className="am-nav-arrow">▶</button>
+        {/* ── Collapsible right action rail (icon-only when collapsed) ── */}
+        <div className={`bk-actions-wrap${actionsOpen ? '' : ' bk-actions-wrap--collapsed'}`}>
+          <button
+            type="button"
+            className="bk-shell-toggle bk-shell-toggle--between-main-and-actions"
+            aria-expanded={actionsOpen}
+            title={actionsOpen ? 'Collapse action panel' : 'Expand action panel'}
+            onClick={() => setActionsOpen(o => !o)}
+          >
+            {actionsOpen ? '»' : '«'}
+          </button>
+          <div className="bk-actions-wrap__inner">
+            {/* Record nav — Client / Account prev-next */}
+            <div className="bk-record-nav">
+              <div className="bk-record-nav__group">
+                <button className="bk-record-nav__arrow" title="Previous client">◀</button>
+                <span className="bk-record-nav__label">CLIENT</span>
+                <button className="bk-record-nav__arrow" title="Next client">▶</button>
+              </div>
+              <div className="bk-record-nav__group">
+                <button className="bk-record-nav__arrow" title="Previous account">◀</button>
+                <span className="bk-record-nav__label">ACCOUNT</span>
+                <button className="bk-record-nav__arrow" title="Next account">▶</button>
+              </div>
+            </div>
+            <ActionButtons
+              mode={mode}
+              isCollapsed={!actionsOpen}
+              onView={handleView}
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onClose={handleClose}
+              onSave={handleSave}
+              onCancel={handleCancel}
+            />
           </div>
-          <div className="am-right-nav__group">
-            <button className="am-nav-arrow">◀</button>
-            <span className="am-nav-label">Account</span>
-            <button className="am-nav-arrow">▶</button>
-          </div>
-          <ActionButtons
-            mode={mode}
-            onView={handleView} onAdd={handleAdd} onEdit={handleEdit}
-            onClose={handleClose} onSave={handleSave} onCancel={handleCancel}
-          />
         </div>
+
       </div>
 
-      {/* ── Sub-modals ── */}
+      {/* ════════════════════════ SUB-MODALS ════════════════════════════════════ */}
 
-      {/* Special Conditions */}
-      {subModal === 'specialConditions' && (
+      {subModal === 2044 && (
         <div className="bk-modal-overlay">
           <div className="bk-modal bk-modal--md">
             <div className="bk-modal__header">
               <div className="bk-modal__title">
-                <span className="bk-modal__title-icon">⚙</span>
-                Special Conditions
+                <span className="bk-modal__title-icon">⚙</span>Special Conditions
               </div>
               <button className="bk-modal__close" onClick={() => setSubModal(null)}>✕</button>
             </div>
@@ -410,7 +429,8 @@ const AccountMaintenance: React.FC = () => {
             </div>
             <div className="bk-modal__footer">
               <div className="bk-modal-footer-btns">
-                <button className="bk-btn bk-btn--save" onClick={() => { showToast('Special conditions saved'); setSubModal(null); }}>✔ Save</button>
+                <button className="bk-btn bk-btn--save"
+                  onClick={() => { showToast('Special conditions saved'); setSubModal(null); }}>✔ Save</button>
                 <button className="bk-btn bk-btn--cancel" onClick={() => setSubModal(null)}>✕ Cancel</button>
               </div>
             </div>
@@ -418,14 +438,12 @@ const AccountMaintenance: React.FC = () => {
         </div>
       )}
 
-      {/* Blocking / Unblocking */}
-      {subModal === 'blockUnblock' && (
+      {subModal === 1420 && (
         <div className="bk-modal-overlay">
           <div className="bk-modal bk-modal--md">
             <div className="bk-modal__header">
               <div className="bk-modal__title">
-                <span className="bk-modal__title-icon">🔒</span>
-                Blocking / Unblocking
+                <span className="bk-modal__title-icon">🔒</span>Blocking / Unblocking
               </div>
               <button className="bk-modal__close" onClick={() => setSubModal(null)}>✕</button>
             </div>
@@ -435,9 +453,11 @@ const AccountMaintenance: React.FC = () => {
                   <div className="bk-form-row">
                     <label className="bk-form-label bk-form-label--required">Reason</label>
                     <div className="bk-form-control">
-                      <select className="bk-select"><option value="">--Select--</option>
+                      <select className="bk-select">
+                        <option value="">--Select--</option>
                         <option>Legal Hold</option><option>Fraud Suspicion</option>
-                        <option>Customer Request</option><option>Dormant</option></select>
+                        <option>Customer Request</option><option>Dormant</option>
+                      </select>
                     </div>
                   </div>
                   <div className="bk-form-row">
@@ -470,23 +490,23 @@ const AccountMaintenance: React.FC = () => {
             </div>
             <div className="bk-modal__footer">
               <div className="bk-modal-footer-btns">
-                <button className="bk-btn bk-btn--save" onClick={() => { showToast('Block/Unblock instruction saved'); setSubModal(null); }}>✔ Save</button>
+                <button className="bk-btn bk-btn--save"
+                  onClick={() => { showToast('Block/Unblock instruction saved'); setSubModal(null); }}>✔ Save</button>
                 <button className="bk-btn bk-btn--cancel" onClick={() => setSubModal(null)}>✕ Cancel</button>
-                <button className="bk-btn bk-btn--view" onClick={() => showToast('History loaded')}>History</button>
+                <button className="bk-btn bk-btn--view"
+                  onClick={() => showToast('History loaded')}>History</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Migrate Client */}
-      {subModal === 'migrateClient' && (
+      {subModal === 1430 && (
         <div className="bk-modal-overlay">
           <div className="bk-modal bk-modal--sm">
             <div className="bk-modal__header">
               <div className="bk-modal__title">
-                <span className="bk-modal__title-icon">🔀</span>
-                Migrate Client
+                <span className="bk-modal__title-icon">🔀</span>Migrate Client
               </div>
               <button className="bk-modal__close" onClick={() => setSubModal(null)}>✕</button>
             </div>
@@ -496,7 +516,8 @@ const AccountMaintenance: React.FC = () => {
                 <div className="bk-form-control">
                   <select className="bk-select">
                     <option value="">--Select--</option>
-                    <option>00 - HEAD OFFICE</option><option>01 - FORT PORTAL BRANCH</option>
+                    <option>00 - HEAD OFFICE</option>
+                    <option>01 - FORT PORTAL BRANCH</option>
                     <option>02 - BUNDIBUGYO BRANCH</option>
                   </select>
                 </div>
@@ -508,7 +529,8 @@ const AccountMaintenance: React.FC = () => {
             </div>
             <div className="bk-modal__footer">
               <div className="bk-modal-footer-btns">
-                <button className="bk-btn bk-btn--save" onClick={() => { showToast('Client migration initiated'); setSubModal(null); }}>✔ Save</button>
+                <button className="bk-btn bk-btn--save"
+                  onClick={() => { showToast('Client migration initiated'); setSubModal(null); }}>✔ Save</button>
                 <button className="bk-btn bk-btn--cancel" onClick={() => setSubModal(null)}>✕ Cancel</button>
               </div>
             </div>
@@ -516,8 +538,7 @@ const AccountMaintenance: React.FC = () => {
         </div>
       )}
 
-      {/* Account Notes */}
-      {subModal === 'accountNotes' && (
+      {subModal === 1305 && (
         <AccountNotes
           branchId={rec.branchId}
           accountNumber={rec.accountNumber}
@@ -527,8 +548,7 @@ const AccountMaintenance: React.FC = () => {
         />
       )}
 
-      {/* Statement View */}
-      {subModal === 'statementView' && (
+      {subModal === 1500 && (
         <StatementView
           branchId={rec.branchId}
           accountNumber={rec.accountNumber}
@@ -537,8 +557,7 @@ const AccountMaintenance: React.FC = () => {
         />
       )}
 
-      {/* Client Portfolio */}
-      {subModal === 'clientPortfolio' && (
+      {subModal === 1525 && (
         <ClientPortfolio
           branchId={rec.branchId}
           accountNumber={rec.accountNumber}
@@ -547,22 +566,24 @@ const AccountMaintenance: React.FC = () => {
         />
       )}
 
-      {/* Generic placeholder for remaining unimplemented sub-modals */}
-      {subModal && !['specialConditions','blockUnblock','migrateClient',
-                     'accountNotes','statementView','clientPortfolio'].includes(subModal) && (
+      {subModal !== null && ![2044, 1420, 1430, 1305, 1500, 1525].includes(subModal) && (
         <div className="bk-modal-overlay">
           <div className="bk-modal bk-modal--md">
             <div className="bk-modal__header">
               <div className="bk-modal__title">
-                {SIDEBAR_ITEMS.DataEntry.concat(SIDEBAR_ITEMS.View).find(i => i.key === subModal)?.label ?? subModal}
+                {subModalName || `Module ${subModal}`}
               </div>
               <button className="bk-modal__close" onClick={() => setSubModal(null)}>✕</button>
             </div>
-            <div className="bk-modal__body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 200, color: 'var(--bank-text-muted)' }}>
+            <div className="bk-modal__body" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              minHeight: 200, color: 'var(--bank-text-muted)',
+            }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>🔧</div>
                 <p style={{ fontWeight: 600 }}>
-                  {SIDEBAR_ITEMS.DataEntry.concat(SIDEBAR_ITEMS.View).find(i => i.key === subModal)?.label}
+                  {SIDEBAR_ITEMS.DataEntry.concat(SIDEBAR_ITEMS.View)
+                    .find(i => i.key === subModal)?.label}
                 </p>
                 <small>Component not yet implemented</small>
               </div>

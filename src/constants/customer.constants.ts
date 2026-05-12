@@ -88,6 +88,22 @@ export const INITIAL_CUSTOMER: CustomerRecord = {
   createdOn: '', modifiedOn: '', supervisedOn: '',
 };
 
+
+
+
+export const INITIAL_LOAN: CustomerRecord = {
+  branchId: '00', branchName: 'HEAD OFFICE',
+  clientId: '', clientType: 'Individual Client',
+  clientClass: '', clientName: '',
+  personal: INITIAL_PERSONAL,
+  addresses: [],
+  employment: INITIAL_EMPLOYMENT,
+  specialOffers: INITIAL_SPECIAL_OFFERS,
+  status: '', openDate: '', closedDate: '',
+  createdBy: '', modifiedBy: '', supervisedBy: '',
+  createdOn: '', modifiedOn: '', supervisedOn: '',
+};
+
 export const INITIAL_INTRODUCER: IntroducerRecord = {
   introducerCustomerId: '', introducerName: '',
   knowSince: '', remarks: '', baseBranchId: '00',
